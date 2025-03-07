@@ -20,57 +20,81 @@ enum UserRole {
 }
 
 model Admin {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  email     String    @unique
-  password  String
-  name      String
-  role      AdminRole
-  isActive  Boolean   @default(true)
-  lastLogin DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  email          String        @unique
+  password       String
+  name           String
+  role           AdminRole
+  isActive       Boolean       @default(true)
+  lastLogin      DateTime?
+  organization   Organisation? @relation(fields: [organizationId], references: [id])
+  organizationId String?       @db.ObjectId
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 model User {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  email         String      @unique
-  password      String
-  name          String
-  role          UserRole
-  isActive      Boolean     @default(true)
-  lastLogin     DateTime?
-  department    Department? @relation(fields: [departmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  departmentId  String?     @db.ObjectId
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  email          String       @unique
+  password       String
+  name           String
+  role           UserRole
+  isActive       Boolean      @default(true)
+  lastLogin      DateTime?
+  organization   Organisation @relation(fields: [organizationId], references: [id])
+  organizationId String       @db.ObjectId
+  department     Department?  @relation(fields: [departmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  departmentId   String?      @db.ObjectId
   managedDepartments Department[] @relation("DepartmentHead")
-  reportsTo     User?       @relation("UserHierarchy", fields: [reportsToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  reportsToId   String?     @db.ObjectId
-  subordinates  User[]      @relation("UserHierarchy")
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  reportsTo      User?       @relation("UserHierarchy", fields: [reportsToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reportsToId    String?     @db.ObjectId
+  subordinates   User[]      @relation("UserHierarchy")
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model Organisation {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  code        String       @unique
+  address     String
+  phone       String?
+  email       String?
+  website     String?
+  logo        String?
+  description String?
+  isActive    Boolean      @default(true)
+  departments Department[]
+  users       User[]
+  admins      Admin[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model Department {
-  id            String       @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  code          String       @unique
-  description   String?
-  head          User?        @relation("DepartmentHead", fields: [headId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  headId        String?      @db.ObjectId
-  parentDepartment Department? @relation("DepartmentHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentId      String?      @db.ObjectId
-  subDepartments Department[] @relation("DepartmentHierarchy")
-  members       User[]
-  isActive      Boolean      @default(true)
-  location      String?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  code             String       @unique
+  description      String?
+  head             User?        @relation("DepartmentHead", fields: [headId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  headId           String?      @db.ObjectId
+  parentDepartment Department?  @relation("DepartmentHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId         String?      @db.ObjectId
+  subDepartments   Department[] @relation("DepartmentHierarchy")
+  members          User[]
+  isActive         Boolean      @default(true)
+  location         String?
+  organization     Organisation @relation(fields: [organizationId], references: [id])
+  organizationId   String       @db.ObjectId
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
-  @@unique([name, parentId])
+  @@unique([name, parentId, organizationId])
 }
 
 model MaintenanceMode {
-  id      String  @id @default("MAINTENANCE_FLAG") @map("_id")
-  enabled Boolean @default(false)
+  id        String   @id @default("MAINTENANCE_FLAG") @map("_id")
+  enabled   Boolean  @default(false)
   updatedAt DateTime @default(now())
 }
 

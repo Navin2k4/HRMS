@@ -31,6 +31,7 @@ const menuItems = [
   { path: "/superadmin/alerts", icon: FiAlertCircle, label: "System Alerts" },
   { path: "/superadmin/settings", icon: FiSettings, label: "System Settings" },
   { path: "/superadmin/maintenance", icon: FiTool, label: "Maintenance" },
+  { path: "/superadmin/organization", icon: FiShield, label: "Organization" },
 ];
 
 const SuperAdminSidebar = () => {

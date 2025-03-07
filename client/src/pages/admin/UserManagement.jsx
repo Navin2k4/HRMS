@@ -43,11 +43,16 @@ const UserManagement = () => {
   const [showPasswordUpdate, setShowPasswordUpdate] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [organizations, setOrganizations] = useState([]);
 
   const fetchUsers = async () => {
     try {
       setTableLoading(true);
-      const response = await axios.get("/api/users");
+      const response = await axios.get("/api/users", {
+        params: {
+          organizationId: user.organizationId,
+        },
+      });
       if (response.data.success) {
         setUsers(response.data.data);
       } else {
@@ -422,6 +427,22 @@ const UserManagement = () => {
                 <Option value="HR">HR</Option>
                 <Option value="MANAGER">Manager</Option>
                 <Option value="EMPLOYEE">Employee</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="organizationId"
+              label="Organization"
+              rules={[
+                { required: true, message: "Please select an organization" },
+              ]}
+            >
+              <Select placeholder="Select organization">
+                {organizations.map((org) => (
+                  <Option key={org.id} value={org.id}>
+                    {org.name}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
           </div>

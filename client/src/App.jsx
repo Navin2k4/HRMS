@@ -54,6 +54,7 @@ import AuditLogs from "./pages/admin/AuditLogs";
 import SystemAlerts from "./pages/admin/SystemAlerts";
 import SystemSettings from "./pages/admin/SystemSettings";
 import Maintenance from "./pages/admin/Maintenance";
+import OrganizationManagement from "./pages/admin/OrganizationManagement";
 
 const App = () => {
   return (
@@ -123,6 +124,7 @@ const App = () => {
             <Route index element={<AdminDashboard />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="department" element={<DepartmentManagement />} />
+            <Route path="organization" element={<OrganizationManagement />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="billing" element={<BillingManagement />} />
             <Route path="security" element={<SecurityManagement />} />

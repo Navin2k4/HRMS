@@ -67,6 +67,7 @@ const DepartmentManagement = () => {
   const [departmentTree, setDepartmentTree] = useState([]);
   console.log(departmentTree);
   const [users, setUsers] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
 
   const { user } = useUser();
 
@@ -76,10 +77,23 @@ const DepartmentManagement = () => {
       setTableLoading(true);
       const [deptResponse, hierarchyResponse, usersResponse] =
         await Promise.all([
-          axios.get("/api/departments"),
-          axios.get("/api/departments/hierarchy"),
-          axios.get("/api/users"),
+          axios.get("/api/departments", {
+            params: {
+              organizationId: user.organizationId,
+            },
+          }),
+          axios.get("/api/departments/hierarchy", {
+            params: {
+              organizationId: user.organizationId,
+            },
+          }),
+          axios.get("/api/users", {
+            params: {
+              organizationId: user.organizationId,
+            },
+          }),
         ]);
+
       if (deptResponse.data.success) {
         setDepartments(deptResponse.data.data);
       }
@@ -493,6 +507,26 @@ const DepartmentManagement = () => {
             initialValue={true}
           >
             <Switch />
+          </Form.Item>
+
+          <Form.Item
+            name="organizationId"
+            label="Organization"
+            rules={[
+              { required: true, message: "Please select an organization" },
+            ]}
+          >
+            <Select
+              placeholder="Select organization"
+              disabled={user.role !== "SUPER_ADMIN"}
+              defaultValue={user.organizationId}
+            >
+              {organizations.map((org) => (
+                <Option key={org.id} value={org.id}>
+                  {org.name}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <div className="flex justify-end gap-3 mt-6">
